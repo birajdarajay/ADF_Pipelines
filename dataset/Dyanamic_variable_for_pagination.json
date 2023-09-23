@@ -1,0 +1,13 @@
+{
+	"name": "Dyanamic_variable_for_pagination",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "DyanmicVariable_pagination",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "RestResource",
+		"schema": []
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

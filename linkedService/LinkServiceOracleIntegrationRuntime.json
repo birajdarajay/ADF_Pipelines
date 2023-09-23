@@ -1,0 +1,38 @@
+{
+	"name": "LinkServiceOracleIntegrationRuntime",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"description": "LinkServiceOracleIntegrationRuntim",
+		"parameters": {
+			"username": {
+				"type": "String",
+				"defaultValue": "Ajay"
+			},
+			"host": {
+				"type": "string",
+				"defaultValue": "DESKTOP-E9268CJ"
+			},
+			"port": {
+				"type": "int",
+				"defaultValue": 1521
+			},
+			"servicename": {
+				"type": "string",
+				"defaultValue": "orcl.168.25.203"
+			},
+			"password": {
+				"type": "string",
+				"defaultValue": "welcome1"
+			}
+		},
+		"annotations": [],
+		"type": "Oracle",
+		"typeProperties": {
+			"connectionString": "host=@{linkedService().host};port=@{linkedService().port};serviceName=@{linkedService().servicename};user id=@{linkedService().username};Password=@{linkedService().password}"
+		},
+		"connectVia": {
+			"referenceName": "SelfHostedIntegrationRuntimeDemo",
+			"type": "IntegrationRuntimeReference"
+		}
+	}
+}

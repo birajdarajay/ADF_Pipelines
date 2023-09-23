@@ -1,0 +1,66 @@
+{
+	"name": "UserDefineFunctionDF",
+	"properties": {
+		"description": "Check in derived column Function Expression",
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "EMPDataSorce",
+						"type": "DatasetReference"
+					},
+					"name": "EmpgenderDataSource",
+					"description": "EmpgenderDataSource"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "EmpDeptOutputDataset",
+						"type": "DatasetReference"
+					},
+					"name": "GendrConversionOutput"
+				}
+			],
+			"transformations": [
+				{
+					"name": "DerivedGender"
+				}
+			],
+			"udfLibraries": [
+				{
+					"referenceName": "GenderConvertInt",
+					"type": "DataFlowReference"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          EMPLOYEE_ID as short,",
+				"          FIRST_NAME as string,",
+				"          LAST_NAME as string,",
+				"          EMAIL as string,",
+				"          PHONE_NUMBER as string,",
+				"          HIRE_DATE as string,",
+				"          JOB_ID as string,",
+				"          SALARY as short,",
+				"          COMMISSION_PCT as string,",
+				"          MANAGER_ID as string,",
+				"          DEPARTMENT_ID as short,",
+				"          GENDER as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     inferDriftedColumnTypes: true,",
+				"     ignoreNoFilesFound: false) ~> EmpgenderDataSource",
+				"EmpgenderDataSource derive(GENDER = GenderConversionInt(GENDER)) ~> DerivedGender",
+				"DerivedGender sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:['GendrConversionOutput'],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> GendrConversionOutput"
+			]
+		}
+	}
+}

@@ -1,0 +1,7 @@
+{
+	"name": "SelfHostedIntegrationRuntimeDemo",
+	"properties": {
+		"type": "SelfHosted",
+		"description": "SelfHostedIntegrationRuntimeDemo"
+	}
+}

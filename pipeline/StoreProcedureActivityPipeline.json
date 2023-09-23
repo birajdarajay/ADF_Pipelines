@@ -1,0 +1,29 @@
+{
+	"name": "StoreProcedureActivityPipeline",
+	"properties": {
+		"activities": [
+			{
+				"name": "Set variable1",
+				"type": "SetVariable",
+				"dependsOn": [],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "Test",
+					"value": "true"
+				}
+			}
+		],
+		"variables": {
+			"Test": {
+				"type": "String"
+			}
+		},
+		"annotations": [],
+		"lastPublishTime": "2023-09-04T10:07:52Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

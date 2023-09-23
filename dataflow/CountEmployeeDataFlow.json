@@ -1,0 +1,86 @@
+{
+	"name": "CountEmployeeDataFlow",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "EMPDataSorce",
+						"type": "DatasetReference"
+					},
+					"name": "EmployeeSource",
+					"description": "EmployeeSource"
+				},
+				{
+					"dataset": {
+						"referenceName": "DepartmentData",
+						"type": "DatasetReference"
+					},
+					"name": "DeptData"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "EmpDeptOutputDataset",
+						"type": "DatasetReference"
+					},
+					"name": "TotalEMPDeptWise",
+					"description": "TotalEMPDeptWise"
+				}
+			],
+			"transformations": [
+				{
+					"name": "AggregateCountEmployee",
+					"description": "AggregateCountEmployee"
+				},
+				{
+					"name": "EMPDEPTDATA"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          EMPLOYEE_ID as string,",
+				"          FIRST_NAME as string,",
+				"          LAST_NAME as string,",
+				"          EMAIL as string,",
+				"          PHONE_NUMBER as string,",
+				"          HIRE_DATE as string,",
+				"          JOB_ID as string,",
+				"          SALARY as string,",
+				"          COMMISSION_PCT as string,",
+				"          MANAGER_ID as string,",
+				"          DEPARTMENT_ID as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> EmployeeSource",
+				"source(output(",
+				"          DEPARTMENT_ID as string,",
+				"          DEPARTMENT_NAME as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> DeptData",
+				"EmployeeSource aggregate(groupBy(DEPARTMENT_ID),",
+				"     EMPLOYEE_ID = count(EMPLOYEE_ID)) ~> AggregateCountEmployee",
+				"AggregateCountEmployee, DeptData join(AggregateCountEmployee@DEPARTMENT_ID == DeptData@DEPARTMENT_ID,",
+				"     joinType:'inner',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> EMPDEPTDATA",
+				"EMPDEPTDATA sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:['CountEMPDeptWise'],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     mapColumn(",
+				"          {DEPARTMENT NAME} = DEPARTMENT_NAME,",
+				"          {TOTAL EMPLOYEE } = EMPLOYEE_ID",
+				"     ),",
+				"     partitionBy('hash', 1)) ~> TotalEMPDeptWise"
+			]
+		}
+	}
+}

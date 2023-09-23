@@ -1,0 +1,57 @@
+{
+	"name": "ParseTranformation",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "ParseTransformJsonInput",
+						"type": "DatasetReference"
+					},
+					"name": "EMployeeJson",
+					"description": "EMployeeJson"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "JS",
+						"type": "DatasetReference"
+					},
+					"name": "OutputSink",
+					"description": "OutputSink"
+				}
+			],
+			"transformations": [
+				{
+					"name": "parse1"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          Skill as string,",
+				"          Id as integer,",
+				"          Address as (Country as string, State as string, ZipCode as integer),",
+				"          Contact as (Email as string, Mobile as integer)",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     documentForm: 'documentPerLine') ~> EMployeeJson",
+				"EMployeeJson parse(ParseAddress = Skill ? (Country as string,",
+				"          State as string),",
+				"     format: 'delimited',",
+				"     columnNamesAsHeader: false,",
+				"     columnDelimiter: ',',",
+				"     nullValue: '') ~> parse1",
+				"parse1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:['OutputSink'],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> OutputSink"
+			]
+		}
+	}
+}

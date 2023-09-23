@@ -1,0 +1,67 @@
+{
+	"name": "FuzzyJoinDataFlow",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "Sales",
+						"type": "DatasetReference"
+					},
+					"name": "Sales",
+					"description": "Sales"
+				},
+				{
+					"dataset": {
+						"referenceName": "Sales1",
+						"type": "DatasetReference"
+					},
+					"name": "Sales1"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "EmpDeptOutputDataset",
+						"type": "DatasetReference"
+					},
+					"name": "FuzzyJoinOutput",
+					"description": "FuzzyJoinOutput"
+				}
+			],
+			"transformations": [
+				{
+					"name": "join1"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          {Name } as string,",
+				"          total_sales as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: true,",
+				"     ignoreNoFilesFound: false) ~> Sales",
+				"source(output(",
+				"          {Name } as string,",
+				"          total_sales as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> Sales1",
+				"Sales, Sales1 join(fuzzyCompare(Sales@{Name }, Sales1@{Name }, 66.00),",
+				"     joinType:'inner',",
+				"     matchType:'fuzzy',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'off')~> join1",
+				"join1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:['FuzzyJoinOutput'],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> FuzzyJoinOutput"
+			]
+		}
+	}
+}

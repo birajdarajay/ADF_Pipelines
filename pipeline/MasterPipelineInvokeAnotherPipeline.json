@@ -1,0 +1,32 @@
+{
+	"name": "MasterPipelineInvokeAnotherPipeline",
+	"properties": {
+		"activities": [
+			{
+				"name": "InvokingAnotherPipeline",
+				"description": "Invoking Another pipeline from master pipeline",
+				"type": "ExecutePipeline",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "PipelineCopyDataFromOracleDB",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"SourceUserName": "AJAY",
+						"SourceSchemaName": "AJAY",
+						"SourceTableName": "EMP",
+						"TargetUserName": "ATM",
+						"TargetSchemaName": "ATM",
+						"TargetTableName": "EMP"
+					}
+				}
+			}
+		],
+		"annotations": [],
+		"lastPublishTime": "2023-09-02T07:40:57Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

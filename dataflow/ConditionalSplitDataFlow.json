@@ -1,0 +1,88 @@
+{
+	"name": "ConditionalSplitDataFlow",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "EMPDataSorce",
+						"type": "DatasetReference"
+					},
+					"name": "EmployeeDataSource",
+					"description": "EmployeeDataSource"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "EmpDeptOutputDataset",
+						"type": "DatasetReference"
+					},
+					"name": "OutputSetA"
+				},
+				{
+					"dataset": {
+						"referenceName": "EmpDeptOutputDataset",
+						"type": "DatasetReference"
+					},
+					"name": "OutputSetB",
+					"description": "OutputSetB"
+				},
+				{
+					"dataset": {
+						"referenceName": "EmpDeptOutputDataset",
+						"type": "DatasetReference"
+					},
+					"name": "outputRemainingEmployee",
+					"description": "outputRemainingEmployee"
+				}
+			],
+			"transformations": [
+				{
+					"name": "DEPTwiseData",
+					"description": "SETA"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          EMPLOYEE_ID as string,",
+				"          FIRST_NAME as string,",
+				"          LAST_NAME as string,",
+				"          EMAIL as string,",
+				"          PHONE_NUMBER as string,",
+				"          HIRE_DATE as string,",
+				"          JOB_ID as string,",
+				"          SALARY as string,",
+				"          COMMISSION_PCT as string,",
+				"          MANAGER_ID as string,",
+				"          DEPARTMENT_ID as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> EmployeeDataSource",
+				"EmployeeDataSource split(equals(DEPARTMENT_ID,'10'),",
+				"     equals(DEPARTMENT_ID,'20'),",
+				"     disjoint: false) ~> DEPTwiseData@(SETA, SETB, RemainingEmployee)",
+				"DEPTwiseData@SETA sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:['SETA'],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> OutputSetA",
+				"DEPTwiseData@SETB sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:['OutputSetB'],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> OutputSetB",
+				"DEPTwiseData@RemainingEmployee sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:['outputRemainingEmployee'],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> outputRemainingEmployee"
+			]
+		}
+	}
+}

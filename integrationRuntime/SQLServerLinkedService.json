@@ -1,0 +1,7 @@
+{
+	"name": "SQLServerLinkedService",
+	"properties": {
+		"type": "SelfHosted",
+		"description": "SQLServerLinkedService"
+	}
+}

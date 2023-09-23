@@ -1,0 +1,14 @@
+{
+	"name": "ADFINSTANCEAJAYBIRAJDAR",
+	"properties": {
+		"globalConfigurations": {
+			"PipelineBillingEnabled": "true"
+		}
+	},
+	"location": "centralindia",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "cf3aba3d-2671-4128-ac1f-6f464f283cf0",
+		"tenantId": "13904eee-0c1e-4fe9-be6d-287438a91190"
+	}
+}

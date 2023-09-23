@@ -1,0 +1,35 @@
+{
+	"name": "ConditionalPipelineDFPipeline",
+	"properties": {
+		"activities": [
+			{
+				"name": "Conditional Split Data flow",
+				"description": "Conditional Split Data flow ",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "ConditionalSplitDataFlow",
+						"type": "DataFlowReference"
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine"
+				}
+			}
+		],
+		"annotations": [],
+		"lastPublishTime": "2023-09-08T06:35:18Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}
