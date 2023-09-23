@@ -22,6 +22,28 @@
 	},
 	"resources": [
 		{
+			"name": "[concat(parameters('factoryName'), '/InputDataSet')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LinkService_CopyData",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Binary",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "Sample_data.txt",
+						"folderPath": "Input",
+						"container": "adfdemo"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/InputFolderlocation')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -777,7 +799,9 @@
 				"annotations": [],
 				"lastPublishTime": "2023-09-02T08:12:26Z"
 			},
-			"dependsOn": []
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/InputDataSet')]"
+			]
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/PipelineCopyDataFromFile')]",
@@ -853,107 +877,7 @@
 				"lastPublishTime": "2023-09-18T07:29:37Z"
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/OutputDataSet')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/PipelineReturnVariable')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "Copy data1",
-						"type": "Copy",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "BinarySource",
-								"storeSettings": {
-									"type": "AzureBlobStorageReadSettings",
-									"recursive": true
-								},
-								"formatSettings": {
-									"type": "BinaryReadSettings"
-								}
-							},
-							"sink": {
-								"type": "BinarySink",
-								"storeSettings": {
-									"type": "AzureBlobStorageWriteSettings"
-								}
-							},
-							"enableStaging": false
-						},
-						"inputs": [
-							{
-								"referenceName": "InputDataSet",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						],
-						"outputs": [
-							{
-								"referenceName": "OutputDataSet",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						]
-					},
-					{
-						"name": "Set variable1",
-						"type": "SetVariable",
-						"dependsOn": [
-							{
-								"activity": "Copy data1",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"policy": {
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"variableName": "pipelineReturnValue",
-							"value": [
-								{
-									"key": "Run_name",
-									"value": {
-										"type": "String",
-										"content": "Copy Pipeline"
-									}
-								},
-								{
-									"key": "Run_id",
-									"value": {
-										"type": "Expression",
-										"content": "@pipeline().RunId"
-									}
-								}
-							],
-							"setSystemVariable": true
-						}
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {},
-					"cancelAfter": {}
-				},
-				"annotations": [],
-				"lastPublishTime": "2023-09-20T06:54:02Z"
-			},
-			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/InputDataSet')]",
 				"[concat(variables('factoryId'), '/datasets/OutputDataSet')]"
 			]
 		}

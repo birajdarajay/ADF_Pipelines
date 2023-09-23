@@ -13,6 +13,66 @@
 	},
 	"resources": [
 		{
+			"name": "[concat(parameters('factoryName'), '/ParseTranformation')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "ParseTransformJsonInput",
+								"type": "DatasetReference"
+							},
+							"name": "EMployeeJson",
+							"description": "EMployeeJson"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "JS",
+								"type": "DatasetReference"
+							},
+							"name": "OutputSink",
+							"description": "OutputSink"
+						}
+					],
+					"transformations": [
+						{
+							"name": "parse1"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          Skill as string,",
+						"          Id as integer,",
+						"          Address as (Country as string, State as string, ZipCode as integer),",
+						"          Contact as (Email as string, Mobile as integer)",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     documentForm: 'documentPerLine') ~> EMployeeJson",
+						"EMployeeJson parse(ParseAddress = Skill ? (Country as string,",
+						"          State as string),",
+						"     format: 'delimited',",
+						"     columnNamesAsHeader: false,",
+						"     columnDelimiter: ',',",
+						"     nullValue: '') ~> parse1",
+						"parse1 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     partitionFileNames:['OutputSink'],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     partitionBy('hash', 1)) ~> OutputSink"
+					]
+				}
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/PivotDataFlow')]",
 			"type": "Microsoft.DataFactory/factories/dataflows",
 			"apiVersion": "2018-06-01",
@@ -1194,115 +1254,6 @@
 				},
 				"annotations": [],
 				"lastPublishTime": "2023-09-09T07:42:33Z"
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/PipelineCopyDataFromOracleDB')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "Copy data1",
-						"type": "Copy",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "OracleSource",
-								"partitionOption": "None",
-								"queryTimeout": "02:00:00"
-							},
-							"sink": {
-								"type": "OracleSink",
-								"writeBatchSize": 10000
-							},
-							"enableStaging": false,
-							"translator": {
-								"type": "TabularTranslator",
-								"typeConversion": true,
-								"typeConversionSettings": {
-									"allowDataTruncation": true,
-									"treatBooleanAsNumber": false
-								}
-							}
-						},
-						"inputs": [
-							{
-								"referenceName": "DatasetOracleDBDemo",
-								"type": "DatasetReference",
-								"parameters": {
-									"userName": {
-										"value": "@pipeline().parameters.SourceUserName",
-										"type": "Expression"
-									},
-									"SchemaName": {
-										"value": "@pipeline().parameters.SourceSchemaName",
-										"type": "Expression"
-									},
-									"TableName": {
-										"value": "@pipeline().parameters.SourceTableName",
-										"type": "Expression"
-									}
-								}
-							}
-						],
-						"outputs": [
-							{
-								"referenceName": "DatasetOracleDBDemo",
-								"type": "DatasetReference",
-								"parameters": {
-									"userName": {
-										"value": "@pipeline().parameters.TargetUserName",
-										"type": "Expression"
-									},
-									"SchemaName": {
-										"value": "@pipeline().parameters.TargetSchemaName",
-										"type": "Expression"
-									},
-									"TableName": {
-										"value": "@pipeline().parameters.TargetTableName",
-										"type": "Expression"
-									}
-								}
-							}
-						]
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {},
-					"cancelAfter": {}
-				},
-				"parameters": {
-					"SourceUserName": {
-						"type": "String"
-					},
-					"SourceSchemaName": {
-						"type": "String"
-					},
-					"SourceTableName": {
-						"type": "String"
-					},
-					"TargetUserName": {
-						"type": "String"
-					},
-					"TargetSchemaName": {
-						"type": "String"
-					},
-					"TargetTableName": {
-						"type": "String"
-					}
-				},
-				"annotations": [],
-				"lastPublishTime": "2023-08-30T10:31:27Z"
 			},
 			"dependsOn": []
 		}

@@ -13,6 +13,105 @@
 	},
 	"resources": [
 		{
+			"name": "[concat(parameters('factoryName'), '/PipelineReturnVariable')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Copy data1",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "BinarySource",
+								"storeSettings": {
+									"type": "AzureBlobStorageReadSettings",
+									"recursive": true
+								},
+								"formatSettings": {
+									"type": "BinaryReadSettings"
+								}
+							},
+							"sink": {
+								"type": "BinarySink",
+								"storeSettings": {
+									"type": "AzureBlobStorageWriteSettings"
+								}
+							},
+							"enableStaging": false
+						},
+						"inputs": [
+							{
+								"referenceName": "InputDataSet",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "OutputDataSet",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					},
+					{
+						"name": "Set variable1",
+						"type": "SetVariable",
+						"dependsOn": [
+							{
+								"activity": "Copy data1",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "pipelineReturnValue",
+							"value": [
+								{
+									"key": "Run_name",
+									"value": {
+										"type": "String",
+										"content": "Copy Pipeline"
+									}
+								},
+								{
+									"key": "Run_id",
+									"value": {
+										"type": "Expression",
+										"content": "@pipeline().RunId"
+									}
+								}
+							],
+							"setSystemVariable": true
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": [],
+				"lastPublishTime": "2023-09-20T06:54:02Z"
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/ReadJsonOutputoActivity')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -1508,66 +1607,6 @@
 						"     skipDuplicateMapInputs: true,",
 						"     skipDuplicateMapOutputs: true,",
 						"     partitionBy('hash', 1)) ~> TotalEmp"
-					]
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/ParseTranformation')]",
-			"type": "Microsoft.DataFactory/factories/dataflows",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"type": "MappingDataFlow",
-				"typeProperties": {
-					"sources": [
-						{
-							"dataset": {
-								"referenceName": "ParseTransformJsonInput",
-								"type": "DatasetReference"
-							},
-							"name": "EMployeeJson",
-							"description": "EMployeeJson"
-						}
-					],
-					"sinks": [
-						{
-							"dataset": {
-								"referenceName": "JS",
-								"type": "DatasetReference"
-							},
-							"name": "OutputSink",
-							"description": "OutputSink"
-						}
-					],
-					"transformations": [
-						{
-							"name": "parse1"
-						}
-					],
-					"scriptLines": [
-						"source(output(",
-						"          Skill as string,",
-						"          Id as integer,",
-						"          Address as (Country as string, State as string, ZipCode as integer),",
-						"          Contact as (Email as string, Mobile as integer)",
-						"     ),",
-						"     allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     ignoreNoFilesFound: false,",
-						"     documentForm: 'documentPerLine') ~> EMployeeJson",
-						"EMployeeJson parse(ParseAddress = Skill ? (Country as string,",
-						"          State as string),",
-						"     format: 'delimited',",
-						"     columnNamesAsHeader: false,",
-						"     columnDelimiter: ',',",
-						"     nullValue: '') ~> parse1",
-						"parse1 sink(allowSchemaDrift: true,",
-						"     validateSchema: false,",
-						"     partitionFileNames:['OutputSink'],",
-						"     skipDuplicateMapInputs: true,",
-						"     skipDuplicateMapOutputs: true,",
-						"     partitionBy('hash', 1)) ~> OutputSink"
 					]
 				}
 			},
