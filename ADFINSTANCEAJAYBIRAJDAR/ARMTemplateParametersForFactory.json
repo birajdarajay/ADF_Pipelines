@@ -1,0 +1,27 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"value": "ADFINSTANCEAJAYBIRAJDAR"
+		},
+		"LinkServiceOracleIntegrationRuntime_connectionString": {
+			"value": "host=@{linkedService().host};port=@{linkedService().port};serviceName=@{linkedService().servicename};user id=@{linkedService().username};Password=@{linkedService().password}"
+		},
+		"LinkService_CopyData_connectionString": {
+			"value": ""
+		},
+		"SqlServerLinkedService_connectionString": {
+			"value": ""
+		},
+		"DyanmicVariable_pagination_properties_typeProperties_url": {
+			"value": "https://pokeapi.co/api/v2/pokemon?offset=20&limit={offset}"
+		},
+		"RestService1_properties_typeProperties_url": {
+			"value": "https://pokeapi.co/api/v2/pokemon"
+		},
+		"EventBasedTriggered_properties_typeProperties_scope": {
+			"value": "/subscriptions/1b80b2ab-6c01-4393-ae53-3aefeb14943f/resourceGroups/ADF_TEST_RESOURCE_GROUP/providers/Microsoft.Storage/storageAccounts/demostorageajaybirajdar"
+		}
+	}
+}
