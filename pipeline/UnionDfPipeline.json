@@ -1,0 +1,35 @@
+{
+	"name": "UnionDfPipeline",
+	"properties": {
+		"activities": [
+			{
+				"name": "UnionDataFlow",
+				"description": "UnionDataFlow",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "UnionDataFlow",
+						"type": "DataFlowReference"
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine"
+				}
+			}
+		],
+		"annotations": [],
+		"lastPublishTime": "2023-09-08T11:11:22Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

@@ -1,0 +1,63 @@
+{
+	"name": "RankTansformationDataflow",
+	"properties": {
+		"description": "RankTansformationDataflow",
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "EMPDataSorce",
+						"type": "DatasetReference"
+					},
+					"name": "EmployeeDataSource",
+					"description": "EmployeeDataSource"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "EmpDeptOutputDataset",
+						"type": "DatasetReference"
+					},
+					"name": "RankTransformationOutput",
+					"description": "RankTransformationOutput"
+				}
+			],
+			"transformations": [
+				{
+					"name": "RankDepartmentWise",
+					"description": "RankDepartmentWise"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          EMPLOYEE_ID as string,",
+				"          FIRST_NAME as string,",
+				"          LAST_NAME as string,",
+				"          EMAIL as string,",
+				"          PHONE_NUMBER as string,",
+				"          HIRE_DATE as string,",
+				"          JOB_ID as string,",
+				"          SALARY as string,",
+				"          COMMISSION_PCT as string,",
+				"          MANAGER_ID as string,",
+				"          DEPARTMENT_ID as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     inferDriftedColumnTypes: true,",
+				"     ignoreNoFilesFound: false) ~> EmployeeDataSource",
+				"EmployeeDataSource rank(asc(SALARY, true),",
+				"     output(RankSalary as long),",
+				"     dense: true) ~> RankDepartmentWise",
+				"RankDepartmentWise sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:['RankTransformationOutput'],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> RankTransformationOutput"
+			]
+		}
+	}
+}

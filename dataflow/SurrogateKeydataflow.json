@@ -1,0 +1,53 @@
+{
+	"name": "SurrogateKeydataflow",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "SurrogateKeyEMPDataSet",
+						"type": "DatasetReference"
+					},
+					"name": "SurrogateKeyEMPSOurce",
+					"description": "SurrogateKeyEMPSOurce"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "EmpDeptOutputDataset",
+						"type": "DatasetReference"
+					},
+					"name": "SurrogateKeyOutput",
+					"description": "SurrogateKeyOutput"
+				}
+			],
+			"transformations": [
+				{
+					"name": "surrogateKeyEmp",
+					"description": "surrogateKeyEmp"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          emloyee_name as string,",
+				"          Country as string,",
+				"          department_id as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> SurrogateKeyEMPSOurce",
+				"SurrogateKeyEMPSOurce keyGenerate(output(EMPKEY as long),",
+				"     startAt: 1L,",
+				"     stepValue: 1L) ~> surrogateKeyEmp",
+				"surrogateKeyEmp sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:['SurrogateKeyOutput'],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> SurrogateKeyOutput"
+			]
+		}
+	}
+}

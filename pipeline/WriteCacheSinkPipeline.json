@@ -1,0 +1,67 @@
+{
+	"name": "WriteCacheSinkPipeline",
+	"properties": {
+		"description": "WriteCacheSinkPipeline",
+		"activities": [
+			{
+				"name": "CacheOutput",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "WriteCacheActivity",
+						"dependencyConditions": [
+							"Completed"
+						]
+					}
+				],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "MaxSal",
+					"value": {
+						"value": "@activity('WriteCacheActivity').output.runStatus.output.CacheSink.value[0].Max_Sal",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "WriteCacheActivity",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "WriteCacheSink",
+						"type": "DataFlowReference"
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "None",
+					"cacheSinks": {
+						"firstRowOnly": true
+					}
+				}
+			}
+		],
+		"variables": {
+			"MaxSal": {
+				"type": "Integer"
+			}
+		},
+		"annotations": [],
+		"lastPublishTime": "2023-09-18T09:31:35Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

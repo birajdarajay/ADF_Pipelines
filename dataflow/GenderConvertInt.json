@@ -1,0 +1,15 @@
+{
+	"name": "GenderConvertInt",
+	"properties": {
+		"description": "Convert Gender in One and Zero",
+		"type": "UDFLibrary",
+		"typeProperties": {
+			"sources": [],
+			"sinks": [],
+			"transformations": [],
+			"scriptLines": [
+				"GenderConversionInt(string) as string = iif(i1=='male','0','1')"
+			]
+		}
+	}
+}

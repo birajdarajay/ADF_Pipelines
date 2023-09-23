@@ -1,0 +1,56 @@
+{
+	"name": "ParseTransformJsonInput",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LinkService_CopyData",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Json",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "FlattenTransformationOutput",
+				"folderPath": "Output",
+				"container": "adfdemo"
+			}
+		},
+		"schema": {
+			"type": "object",
+			"properties": {
+				"Skill": {
+					"type": "string"
+				},
+				"Id": {
+					"type": "integer"
+				},
+				"Address": {
+					"type": "object",
+					"properties": {
+						"Country": {
+							"type": "string"
+						},
+						"State": {
+							"type": "string"
+						},
+						"ZipCode": {
+							"type": "integer"
+						}
+					}
+				},
+				"Contact": {
+					"type": "object",
+					"properties": {
+						"Email": {
+							"type": "string"
+						},
+						"Mobile": {
+							"type": "integer"
+						}
+					}
+				}
+			}
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

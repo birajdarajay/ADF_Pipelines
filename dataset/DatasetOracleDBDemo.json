@@ -1,0 +1,44 @@
+{
+	"name": "DatasetOracleDBDemo",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LinkServiceOracleIntegrationRuntime",
+			"type": "LinkedServiceReference",
+			"parameters": {
+				"username": {
+					"value": "@dataset().userName",
+					"type": "Expression"
+				},
+				"host": "DESKTOP-E9268CJ",
+				"port": 1521,
+				"servicename": "orcl.168.25.203",
+				"password": "welcome1"
+			}
+		},
+		"parameters": {
+			"userName": {
+				"type": "String"
+			},
+			"SchemaName": {
+				"type": "String"
+			},
+			"TableName": {
+				"type": "String"
+			}
+		},
+		"annotations": [],
+		"type": "OracleTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": {
+				"value": "@dataset().SchemaName",
+				"type": "Expression"
+			},
+			"table": {
+				"value": "@dataset().TableName",
+				"type": "Expression"
+			}
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

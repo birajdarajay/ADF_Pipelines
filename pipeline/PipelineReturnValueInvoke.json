@@ -1,0 +1,66 @@
+{
+	"name": "PipelineReturnValueInvoke",
+	"properties": {
+		"activities": [
+			{
+				"name": "PipelineReturnVariable",
+				"type": "ExecutePipeline",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "PipelineReturnVariable",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "Script1",
+				"type": "Script",
+				"dependsOn": [
+					{
+						"activity": "PipelineReturnVariable",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"linkedServiceName": {
+					"referenceName": "LinkServiceOracleIntegrationRuntime",
+					"type": "LinkedServiceReference",
+					"parameters": {
+						"username": "Ajay",
+						"host": "DESKTOP-E9268CJ",
+						"port": 1521,
+						"servicename": "orcl.168.25.203",
+						"password": "welcome1"
+					}
+				},
+				"typeProperties": {
+					"scripts": [
+						{
+							"type": "Query",
+							"text": {
+								"value": "@insert into emp values ('@{activity('PipelineReturnVariable').output.pipelineReturnValue.Run_name}','@{activity('PipelineReturnVariable').output.pipelineReturnValue.Run_id}')",
+								"type": "Expression"
+							}
+						}
+					],
+					"scriptBlockExecutionTimeout": "02:00:00"
+				}
+			}
+		],
+		"annotations": [],
+		"lastPublishTime": "2023-09-20T06:59:53Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

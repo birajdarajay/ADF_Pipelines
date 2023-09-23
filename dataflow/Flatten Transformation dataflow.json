@@ -1,0 +1,57 @@
+{
+	"name": "Flatten Transformation dataflow",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "EmployeeJSonDatasource",
+						"type": "DatasetReference"
+					},
+					"name": "EmployeeJsonSource",
+					"description": "EmployeeJsonSource"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "JS",
+						"type": "DatasetReference"
+					},
+					"name": "FlattenTransformationOutput",
+					"description": "FlattenTransformationOutput"
+				}
+			],
+			"transformations": [
+				{
+					"name": "FlattenTransformation"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          employees as (Address as (Country as string, State as string, ZipCode as integer), Contact as (Email as string, Mobile as long), Id as short, Skill as string[], name as string)[]",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     documentForm: 'singleDocument') ~> EmployeeJsonSource",
+				"EmployeeJsonSource foldDown(unroll(employees.Skill),",
+				"     mapColumn(",
+				"          Skill = employees.Skill,",
+				"          Id = employees.Id,",
+				"          Address = employees.Address,",
+				"          Contact = employees.Contact",
+				"     ),",
+				"     skipDuplicateMapInputs: false,",
+				"     skipDuplicateMapOutputs: false) ~> FlattenTransformation",
+				"FlattenTransformation sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:['FlattenTransformationOutput'],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> FlattenTransformationOutput"
+			]
+		}
+	}
+}

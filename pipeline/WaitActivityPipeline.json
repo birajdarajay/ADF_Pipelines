@@ -1,0 +1,28 @@
+{
+	"name": "WaitActivityPipeline",
+	"properties": {
+		"activities": [
+			{
+				"name": "Wait1",
+				"type": "Wait",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"waitTimeInSeconds": {
+						"value": "@pipeline().parameters.WaitFor20Sec",
+						"type": "Expression"
+					}
+				}
+			}
+		],
+		"parameters": {
+			"WaitFor20Sec": {
+				"type": "int",
+				"defaultValue": 20
+			}
+		},
+		"annotations": [],
+		"lastPublishTime": "2023-09-02T09:06:07Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

@@ -1,0 +1,35 @@
+{
+	"name": "LookupDFPipeline",
+	"properties": {
+		"activities": [
+			{
+				"name": "LookupDF",
+				"description": "LookupDF",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "LookupDataFlow",
+						"type": "DataFlowReference"
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine"
+				}
+			}
+		],
+		"annotations": [],
+		"lastPublishTime": "2023-09-09T06:46:59Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

@@ -1,0 +1,108 @@
+{
+	"name": "Cached_Lookup_Transformation",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "EMPDataSorce",
+						"type": "DatasetReference"
+					},
+					"name": "EmployeeSource",
+					"description": "EmployeeSource"
+				},
+				{
+					"dataset": {
+						"referenceName": "EMPDataSorce",
+						"type": "DatasetReference"
+					},
+					"name": "Emp",
+					"description": "Emp"
+				}
+			],
+			"sinks": [
+				{
+					"name": "CacheSink",
+					"description": "CacheSink"
+				},
+				{
+					"dataset": {
+						"referenceName": "EmpDeptOutputDataset",
+						"type": "DatasetReference"
+					},
+					"name": "CachedOutput",
+					"description": "CachedOutput"
+				}
+			],
+			"transformations": [
+				{
+					"name": "MaxEMPLOYEEID",
+					"description": "MaxEMPLOYEEID"
+				},
+				{
+					"name": "surrogateKey1"
+				},
+				{
+					"name": "derivedColumn1"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          EMPLOYEE_ID as integer,",
+				"          FIRST_NAME as string,",
+				"          LAST_NAME as string,",
+				"          EMAIL as string,",
+				"          PHONE_NUMBER as string,",
+				"          HIRE_DATE as string,",
+				"          JOB_ID as string,",
+				"          SALARY as string,",
+				"          COMMISSION_PCT as string,",
+				"          MANAGER_ID as string,",
+				"          DEPARTMENT_ID as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     inferDriftedColumnTypes: true,",
+				"     ignoreNoFilesFound: false) ~> EmployeeSource",
+				"source(output(",
+				"          EMPLOYEE_ID as integer,",
+				"          FIRST_NAME as string,",
+				"          LAST_NAME as string,",
+				"          EMAIL as string,",
+				"          PHONE_NUMBER as string,",
+				"          HIRE_DATE as string,",
+				"          JOB_ID as string,",
+				"          SALARY as string,",
+				"          COMMISSION_PCT as string,",
+				"          MANAGER_ID as string,",
+				"          DEPARTMENT_ID as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> Emp",
+				"EmployeeSource aggregate(EMPLOYEE_ID = max(EMPLOYEE_ID)) ~> MaxEMPLOYEEID",
+				"Emp keyGenerate(output(IncrementalID as long),",
+				"     startAt: 27L,",
+				"     stepValue: 1L) ~> surrogateKey1",
+				"surrogateKey1 derive(EMPLOYEE_ID = EMPLOYEE_ID + CacheSink#outputs()[1].MAX_EMPLOYEE_ID) ~> derivedColumn1",
+				"MaxEMPLOYEEID sink(validateSchema: false,",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     store: 'cache',",
+				"     format: 'inline',",
+				"     output: false,",
+				"     saveOrder: 1,",
+				"     mapColumn(",
+				"          MAX_EMPLOYEE_ID = EMPLOYEE_ID",
+				"     )) ~> CacheSink",
+				"derivedColumn1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     partitionFileNames:['CachedOutput'],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> CachedOutput"
+			]
+		}
+	}
+}

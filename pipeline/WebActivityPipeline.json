@@ -1,0 +1,83 @@
+{
+	"name": "WebActivityPipeline",
+	"properties": {
+		"activities": [
+			{
+				"name": "WebGETmethod",
+				"type": "WebActivity",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"url": "https://dummy.restapiexample.com/api/v1/employees",
+					"method": "GET"
+				}
+			},
+			{
+				"name": "WebPOSTmethod",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "WebGETmethod",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"url": "https://dummy.restapiexample.com/api/v1/create",
+					"method": "POST",
+					"headers": {
+						"content-type": "application\\json"
+					},
+					"body": {
+						"name": "Ajay",
+						"salary": "123",
+						"age": "23"
+					}
+				}
+			},
+			{
+				"name": "WebGETmethod_copy1",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "WebPOSTmethod",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"url": "https://dummy.restapiexample.com/api/v1/employees",
+					"method": "GET"
+				}
+			}
+		],
+		"annotations": [],
+		"lastPublishTime": "2023-09-02T10:14:04Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}
